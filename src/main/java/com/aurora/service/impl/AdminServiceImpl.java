@@ -1,12 +1,16 @@
 package com.aurora.service.impl;
 
 import com.aurora.common.Result;
+import com.aurora.constant.MessageConstant;
 import com.aurora.entity.Admin;
+import com.aurora.exception.AccountNotFoundException;
+import com.aurora.exception.PasswordErrorException;
 import com.aurora.mapper.AdminMapper;
 import com.aurora.service.AdminService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.DigestUtils;
 
 @Service
 @Slf4j
@@ -15,13 +19,41 @@ public class AdminServiceImpl implements AdminService {
     private AdminMapper adminMapper;
 
     @Override
-    public boolean login(Admin admin) {
+    public void login(Admin admin) {
         String name = admin.getName();
         log.info(name);
         String password = admin.getPassword();
+        password = DigestUtils.md5DigestAsHex(password.getBytes());
         log.info(password);
         Admin adminOne = adminMapper.getByName(name);
-        if (adminOne == null) return false;
-        return name.equals(adminOne.getName()) && password.equals((adminOne.getPassword()));
+        if (adminOne == null) {
+            throw new AccountNotFoundException(MessageConstant.ACCOUNT_NOT_FOUND);
+        }
+        if (!password.equals(adminOne.getPassword())) {
+            throw new PasswordErrorException(MessageConstant.PASSWORD_ERROR);
+        }
     }
+
+    @Override
+    public boolean add(Admin admin) {
+        String name = admin.getName();
+        Admin adminOne = adminMapper.getByName(name);
+        if (adminOne != null) return false;
+        admin.setPassword(DigestUtils.md5DigestAsHex(admin.getPassword().getBytes()));
+        adminMapper.insert(admin);
+        return true;
+    }
+
+    @Override
+    public Result<String> delete(Integer id) {
+        Admin admin = adminMapper.selectById(id);
+        if (admin == null) return Result.error("用户不存在");
+        else {
+            adminMapper.deleteById(id);
+            return Result.success("删除成功");
+        }
+
+
+    }
+
 }
