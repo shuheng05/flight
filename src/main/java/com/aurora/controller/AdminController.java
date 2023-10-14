@@ -27,16 +27,19 @@ public class AdminController {
     @PostMapping("/login")
     public Result<AdminVo> login(Admin admin) {
         adminService.login(admin);
-        //if (isLogin == false) return Result
         //登录成功后，生成jwt令牌
         Map<String, Object> claims = new HashMap<>();
-        log.info(admin.getId().toString());
-        claims.put("empId", admin.getId());
+        claims.put(JwtClaimsConstant.ADMIN_ID, admin.getId());
+
         String token = JwtUtil.createJWT(
-                "Aurora",
-                7200000,
+                jwtProperties.getAdminSignKey(),
+                jwtProperties.getAdminTime(),
                 claims);
-        AdminVo adminVo = AdminVo.builder().token(token).build();
+        AdminVo adminVo = AdminVo.builder()
+                .id(admin.getId())
+                .name(admin.getName())
+                .token(token)
+                .build();
 
         return Result.success(adminVo);
 
@@ -50,7 +53,7 @@ public class AdminController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public Result<String> delete(@PathVariable Integer id){
+    public Result<String> delete(@PathVariable Integer id) {
         return adminService.delete(id);
     }
 

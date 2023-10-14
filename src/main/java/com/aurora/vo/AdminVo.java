@@ -10,5 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AdminVo {
+    private Integer id;
+    private String name;
     private String token;
 }
