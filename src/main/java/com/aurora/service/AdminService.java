@@ -9,4 +9,6 @@ public interface AdminService {
     public boolean add(Admin admin);
 
     public Result<String> delete(Integer id);
+
+    public Result<String> update(Admin admin);
 }

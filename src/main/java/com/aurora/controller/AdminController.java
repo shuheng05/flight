@@ -24,6 +24,7 @@ public class AdminController {
     @Autowired
     private JwtProperties jwtProperties;
 
+    //管理员登录
     @PostMapping("/login")
     public Result<AdminVo> login(Admin admin) {
         adminService.login(admin);
@@ -45,6 +46,7 @@ public class AdminController {
 
     }
 
+    //增加管理员
     @PostMapping("/add")
     public Result<String> add(Admin admin) {
         boolean isAdded = adminService.add(admin);
@@ -52,10 +54,16 @@ public class AdminController {
         else return Result.error("用户名已存在");
     }
 
+    //删除管理员
     @DeleteMapping("/delete/{id}")
     public Result<String> delete(@PathVariable Integer id) {
         return adminService.delete(id);
     }
 
+    //修改管理员密码
+    @PutMapping("/updata")
+    public Result<String> updata(Admin admin) {
+        return adminService.update(admin);
+    }
 
 }

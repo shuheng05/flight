@@ -7,6 +7,7 @@ import com.aurora.exception.AccountNotFoundException;
 import com.aurora.exception.PasswordErrorException;
 import com.aurora.mapper.AdminMapper;
 import com.aurora.service.AdminService;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -54,6 +55,18 @@ public class AdminServiceImpl implements AdminService {
         }
 
 
+    }
+
+    @Override
+    public Result<String> update(Admin admin) {
+        String name = admin.getName();
+        String password = admin.getPassword();
+        Admin oldAdmin = adminMapper.getByName(name);
+        if (password.equals(oldAdmin.getPassword())) {
+            return Result.error("密码与原密码相同");
+        }
+        adminMapper.update(name, password);
+        return Result.success("修改成功");
     }
 
 }

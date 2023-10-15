@@ -6,6 +6,6 @@ spring:
     password: szh666
 flight:
   jwt:
-    admin-sign-key: Aurora
-    admin-time: 7200000
-    admin-token-name: token
+    admin-sign-key: Aurora #密钥
+    admin-time: 7200000  #两小时过期
+    admin-token-name: token #请求头名字
